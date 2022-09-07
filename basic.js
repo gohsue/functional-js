@@ -1,4 +1,4 @@
-'use strict';
+"use strict";
 
 // 함수형 프로그래밍을 위한 첫 돋움.. 가보자고!
 
@@ -46,10 +46,6 @@ const reduce = (f, acc, iter) => {
 // ex) const f = pipe (a => a+1, a => a+10, a => a+100);
 // console.log(f(0));
 
-
-
-
-
 // curry: 함수를 받아서 함수를 리턴하고, 인자를 받아서 인자가 원하는 개수만큼의 인자가 들어왔을 때 나중에 평가시키는 함수
 // 인자를 받아오는데, 하나를 뺀 나머지 인자(..._)가 존재하면 즉시 실행하고, 존재하지 않을 때는 나머지를 인자로 받는 함수를 리턴한다.
 const curr =
@@ -60,17 +56,17 @@ const curr =
 // mult(3) ---> (..._) => f(3, ..._) 리턴 값 자체가 함수가 된다.
 // mult(3)(2) ---> (2) => f(3,2) 가 되므로 즉시 실행 -> 6이 된다.
 
-const map = curr((func, iter) => iter.map((i) => func(i)));
+const map = curr((f, iter) => iter.map((i) => f(i)));
 const filter = curr((f, iter) => iter.filter((i) => f(i)));
 const reduce = curr((f, acc, iter) => {
-    if (!iter) {
-        iter = acc[Symbol.iterator]();
-        acc = iter.next().value;
-    }
-    for (const a of iter) {
-        acc = f(acc, a);
-    }
-    return acc;
+  if (!iter) {
+    iter = acc[Symbol.iterator]();
+    acc = iter.next().value;
+  }
+  for (const a of iter) {
+    acc = f(acc, a);
+  }
+  return acc;
 });
 const go = curr((init, ...args) => reduce((a, f) => f(a), init, args));
 const pipe = curr(
@@ -79,29 +75,27 @@ const pipe = curr(
       go(f(...init), ...args)
 );
 
-
-
 // 아래는 예시
 
 const products = [
   {
-    name: '🍎',
+    name: "🍎",
     price: 10000,
   },
   {
-    name: '🍇',
+    name: "🍇",
     price: 15000,
   },
   {
-    name: '🥝',
+    name: "🥝",
     price: 35000,
   },
   {
-    name: '🍓',
+    name: "🍓",
     price: 20000,
   },
   {
-    name: '🍍',
+    name: "🍍",
     price: 28000,
   },
 ];
@@ -117,27 +111,27 @@ go(
 */
 
 go(
-    products,
-    (products) => filter((p) => p.price < 20000, products),
-    (products) => map((p) => p.price, products),
-    (prices) => reduce((a, b) => a + b, prices),
-    console.log
+  products,
+  (products) => filter((p) => p.price < 20000, products),
+  (products) => map((p) => p.price, products),
+  (prices) => reduce((a, b) => a + b, prices),
+  console.log
 );
 
 go(
-    products,
-    (products) => filter((p) => p.price < 20000)(products),
-    (products) => map((p) => p.price)(products),
-    (prices) => reduce((a, b) => a + b)(prices),
-    console.log
+  products,
+  (products) => filter((p) => p.price < 20000)(products),
+  (products) => map((p) => p.price)(products),
+  (prices) => reduce((a, b) => a + b)(prices),
+  console.log
 );
 
 go(
-    products,
-    filter((p) => p.price < 20000),
-    map((p) => p.price),
-    reduce((a, b) => a + b),
-    console.log
+  products,
+  filter((p) => p.price < 20000),
+  map((p) => p.price),
+  reduce((a, b) => a + b),
+  console.log
 );
 
 // a => f(a) ---> 즉, f(a)로 표현이 가능하다.
