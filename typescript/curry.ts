@@ -12,13 +12,15 @@ export const curry =
     _.length ? func(a, ..._) : (..._: any) => func(a, ..._);
 
 // curry(함수1)(함수1의 인자) 형태
-const curry1 = (a: number, b: number) => a + b;
-const curry2 = curry(curry1)(1, 2);
-console.log(curry2); // 3
-console.clear();
+const curryFunc1 = (a: number, b: number) => a + b;
+const curry1 = curry(curryFunc1);
+const curry2 = curry1(1)(2);
 
-const curry3 = (a: number, b: number, func: (n: number) => number) => () =>
+console.log(curry2); // 3
+// console.clear();
+
+const curryFunc2 = (a: number, b: number, func: (n: number) => number) => () =>
   func(a + b); // 고차 함수
-const curry4 = curry(curry3)(1, 2, (n: number) => n + 10);
-console.log(curry4); // 함수 리턴
-console.log(curry4()); // 결과값 리턴
+const curry3 = curry(curryFunc2);
+console.log(curry3(1)(2, (n: number) => n + 10)); // 함수 리턴
+console.log(curry3(1)(2, (n: number) => n + 10)()); // 결과값 리턴
