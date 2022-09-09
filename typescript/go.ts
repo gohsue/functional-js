@@ -17,7 +17,7 @@
 
 import { curry } from "./curry";
 
-const reducer = (func: (...a: any) => any, acc: any, iter?: Iterable<any>) => {
+const reduce = (func: (...a: any) => any, acc: any, iter?: Iterable<any>) => {
   // 세 번째 인자가 존재하지 않으면 두 번째 인자를 이터러블로 취급
   const _iter = iter ? iter : acc[Symbol.iterator]();
   let _acc = iter ? acc : _iter.next().value;
@@ -30,7 +30,7 @@ const reducer = (func: (...a: any) => any, acc: any, iter?: Iterable<any>) => {
 };
 
 export const go = (init: any, ...args: any) =>
-  reducer((result, func) => func(result), init, args);
+  reduce((result, func) => func(result), init, args);
 
 const go1 = (n: number) => n + 10;
 console.log(go(1, go1)); // 11
@@ -44,9 +44,9 @@ console.clear();
  * curry 적용하면?
  */
 
-const currReducer = curry(reducer);
+const currreduce = curry(reduce);
 const currgo = curry((init: any, ...args: any) =>
-  currReducer((result: any, func: (a: any) => any) => func(result), init, args)
+  currreduce((result: any, func: (a: any) => any) => func(result), init, args)
 );
 
 const add = (addNumber: number) => (n: number) => n + addNumber;
