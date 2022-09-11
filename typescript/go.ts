@@ -16,17 +16,38 @@
  */
 
 import { curry } from "./curry";
+export const log = console.log;
 
-const reduce = (func: (...a: any) => any, acc: any, iter?: Iterable<any>) => {
+const isIterable = (a:any) => Symbol.iterator in Object(a);
+
+const goPromise = (a: any, f: (a: any) => any) => a instanceof Promise ? a.then(r => f(r)) : f(a);
+
+const reduce = (func: (...a: any) => any, acc: any, iter?: any) => {
   // 세 번째 인자가 존재하지 않으면 두 번째 인자를 이터러블로 취급
-  const _iter = iter ? iter : acc[Symbol.iterator]();
-  let _acc = iter ? acc : _iter.next().value;
+  const _iter: Iterator<any> = isIterable(iter) ? iter[Symbol.iterator]() : acc[Symbol.iterator]();
+  let _acc = isIterable(iter) ? acc : _iter.next().value;
 
-  for (const f of _iter) {
-    _acc = func(_acc, f);
+  // 재귀함수를 이용하여 Promise 처리를 같이 해준다.
+  // for (const f of _iter) {
+  //   _acc = func(_acc, f);
+  // }
+  // return _acc;
+
+  const recur = (a: any) : any => {
+    let __acc = a;
+    let cur;
+
+    while (!(cur = _iter.next()).done) {
+      const valueF = cur.value;
+      __acc = func(__acc, valueF);
+
+      if (a instanceof Promise) return a.then((a: any) => recur(a));
+    }
+
+    return __acc;
   }
 
-  return _acc;
+  return goPromise(_acc, recur);
 };
 
 export const go = (init: any, ...args: any) =>
@@ -90,3 +111,14 @@ const currySum3 = curry((n1: number, n2: number) =>
 );
 const goWithCurry3 = currgo(1, add20, add300, currySum3(20));
 console.log(goWithCurry3);
+console.clear();
+
+const test = currgo(
+  1,
+  (n: number) => (n + 3000),
+  add20,
+  add300,
+  log
+)
+
+
