@@ -117,10 +117,11 @@ const test = currgo(
   1,
   (n: number) => (n + 4000),
   (n: number) => Promise.resolve(n + 50000),
+  (n:number) => Promise.reject('제대로 적용 안 됨!'),
   add20,
   add300,
   log
-)
+).catch(log);
 
 
 
