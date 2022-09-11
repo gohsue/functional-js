@@ -1,5 +1,5 @@
 /**
- * go 함수를 ts화 시키기
+ * goPrev 함수를 ts화 시키기
  * 
  * [js 형식]
  *  const reduce = (f, acc, iter) => {
@@ -12,7 +12,7 @@
     }
     return acc;
 };
- * const go = (init, ...args) => reduce((a, f) => f(a), init, args);
+ * const goPrev = (init, ...args) => reduce((a, f) => f(a), init, args);
  */
 
 import { curry } from "./curry";
@@ -50,14 +50,14 @@ const reduce = (func: (...a: any) => any, acc: any, iter?: any) => {
   return goPromise(_acc, recur);
 };
 
-export const go = (init: any, ...args: any) =>
+const goPrev = (init: any, ...args: any) =>
   reduce((result, func) => func(result), init, args);
 
-const go1 = (n: number) => n + 10;
-console.log(go(1, go1)); // 11
+const goPrev1 = (n: number) => n + 10;
+console.log(goPrev(1, goPrev1)); // 11
 
-const go2 = (n: number) => n + 100;
-console.log(go(1, go1, go2)); // 111
+const goPrev2 = (n: number) => n + 100;
+console.log(goPrev(1, goPrev1, goPrev2)); // 111
 
 console.clear();
 
@@ -65,9 +65,10 @@ console.clear();
  * curry 적용하면?
  */
 
-const currreduce = curry(reduce);
-const currgo = curry((init: any, ...args: any) =>
-  currreduce((result: any, func: (a: any) => any) => func(result), init, args)
+const curreduce = curry(reduce);
+
+export const go = curry((init: any, ...args: any) =>
+curreduce((result: any, func: (a: any) => any) => func(result), init, args)
 );
 
 const add = (addNumber: number) => (n: number) => n + addNumber;
@@ -75,45 +76,45 @@ const add20 = add(20);
 const add300 = add(300);
 const sum = (func: (n: number) => number, n: number) => func(add20(n)); // 고차 함수
 
-// curry 적용 안 한 go 방식
+// curry 적용 안 한 goPrev 방식
 const number1 = 1;
-const goWithNoCurry = go(
+const goPrevWithNoCurry = goPrev(
   number1,
   (n: number) => add20(n), // 21 (축약형: add20으로도 표현 가능)
   (n: number) => add300(n), // 321 (위와 동일)
   (n: number) => sum((result) => result + 4000, n) // 4341
 );
-console.log(goWithNoCurry); // 321
+console.log(goPrevWithNoCurry); // 321
 
-// curry 적용한 go 방식
+// curry 적용한 goPrev 방식
 const currySum = curry(sum);
-const goWithCurry = currgo(
+const goPrevWithCurry = go(
   1,
   add20,
   add300,
   currySum((result: number) => result + 4000) // 4341
 );
-console.log(goWithCurry);
+console.log(goPrevWithCurry);
 console.clear();
 
 // 인자가 두개라면? -> 인자를 두 개 받아야하기 때문에 축약형을 사용할 수 없다.
 const currySum2 = curry((func: (n: number) => number, n1: number, n2: number) =>
   func(add(n1)(n2))
 );
-const goWithCurry2 = currgo(1, add20, add300, (n: number) =>
+const goPrevWithCurry2 = go(1, add20, add300, (n: number) =>
   currySum2((result: number) => result + 4000)(20, n)
 );
-console.log(goWithCurry2);
+console.log(goPrevWithCurry2);
 
 // curry를 걸어주면 인자가 두 개인 값도 축약형으로 사용할 수 있다.
 const currySum3 = curry((n1: number, n2: number) =>
   currySum2((result: number) => result + 4000)(n1, n2)
 );
-const goWithCurry3 = currgo(1, add20, add300, currySum3(20));
-console.log(goWithCurry3);
+const goPrevWithCurry3 = go(1, add20, add300, currySum3(20));
+console.log(goPrevWithCurry3);
 console.clear();
 
-const test = currgo(
+const test = go(
   1,
   (n: number) => (n + 4000),
   (n: number) => Promise.resolve(n + 50000),
