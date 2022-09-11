@@ -41,7 +41,7 @@ const reduce = (func: (...a: any) => any, acc: any, iter?: any) => {
       const valueF = cur.value;
       __acc = func(__acc, valueF);
 
-      if (a instanceof Promise) return a.then((a: any) => recur(a));
+      if (__acc instanceof Promise) return __acc.then((a: any) => recur(a));
     }
 
     return __acc;
@@ -115,10 +115,12 @@ console.clear();
 
 const test = currgo(
   1,
-  (n: number) => (n + 3000),
+  (n: number) => (n + 4000),
+  (n: number) => Promise.resolve(n + 50000),
   add20,
   add300,
   log
 )
+
 
 
