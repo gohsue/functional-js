@@ -8,7 +8,11 @@
 
 import { go } from "./go";
 
-export const pipe = (f: (...as: any) => any , ...fs : any) => (...as : any) => go(f(...as), ...fs);
+export const pipe = (f: (...as: any) => any, ...fs: any) => (...as: any) => go(f(...as), ...fs);
 
-const pipe1 = pipe ((n1: number, n2: number) => n1 + n2 , (n : number) => n+ 10, (n: number) => n+ 100);
-console.log(pipe1(0, 1));
+const pipe1 = pipe(
+  (n1: number, n2: number) => n1 + n2,
+  (n: number) => n + 10,
+  (n: number) => n + 100
+);
+//console.log(pipe1(0, 1));
