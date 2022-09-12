@@ -26,7 +26,9 @@ const goPromise = (a: any, f: (a: any) => any) =>
 const reducePrev = (func: (...a: any) => any, acc: any, iter?: any) => {
   console.log(`acc: ${acc}`)
   console.log(`iter: ${iter}`)
-  
+
+
+  // TODO: Object.entries가 아닌 L.entries로 인자를 받았을 때 _iter이 iterator가 아니라는 오류 발생.
   // 세 번째 인자가 존재하지 않으면 두 번째 인자를 이터러블로 취급
   const _iter: Iterator<any> = iter
     ? iter[Symbol.iterator]()
